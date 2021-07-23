@@ -1,2 +1,3 @@
 //Credential management
 https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html
