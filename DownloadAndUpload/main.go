@@ -10,6 +10,24 @@ import (
 	"os"
 )
 
+func DownloadItems(sess *session.Session){
+	file, err := os.Create("download1.txt")
+	if err != nil{
+		log.Fatal(err.Error())
+	}
+	defer file.Close()
+	downloader:=s3manager.NewDownloader(sess)
+	_,err = downloader.Download(file, &s3.GetObjectInput{
+		Bucket: aws.String("go-aws-s3-first-bucket"),
+		Key: aws.String("key.txt"),
+	})
+	if err != nil{
+		log.Fatal(err.Error())
+	}
+	log.Println("successfully downloaded")
+}
+
+
 func UploadItem(sess *session.Session){
 	f, err := os.Open("additional.txt")
 	if err != nil{
@@ -30,6 +48,7 @@ func UploadItem(sess *session.Session){
 	log.Printf("uploaed file :%+v\n", result)
 }
 
+
 func ListItems(sess *session.Session){
 	svc:=s3.New(sess)
 	resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
@@ -46,6 +65,7 @@ func ListItems(sess *session.Session){
 		fmt.Println(" ")
 	}
 }
+
 func main() {
 	fmt.Println("Listening aws buckets...")
 	sess, err := session.NewSession(&aws.Config{
@@ -55,5 +75,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	UploadItem(sess)
+	fmt.Println("upload items")
 	ListItems(sess)
+	fmt.Println("List items info")
+	DownloadItems(sess)
+	fmt.Println("download items")
+	fmt.Println("delete items")
 }
