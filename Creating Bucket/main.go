@@ -33,6 +33,8 @@ func main(){
 			default:
 				log.Fatal(aerr.Error())
 			}
+		}else{
+			log.Fatal(err.Error())
 		}
 	}
 	log.Println(result)

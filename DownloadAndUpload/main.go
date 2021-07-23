@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -10,6 +11,25 @@ import (
 	"os"
 )
 
+func DeleteItem(sess *session.Session){
+	svc:=s3.New(sess)
+	input:=&s3.DeleteObjectInput{
+		Bucket: aws.String("go-aws-s3-first-bucket"),
+		Key: aws.String("key.txt"),
+	}
+	result, err:= svc.DeleteObject(input)
+	if err != nil{
+	 if aerr,ok:=err.(awserr.Error);ok{
+		 switch aerr.Code() {
+		 default:
+			 log.Fatal(aerr.Error())
+		 }
+	 }else{
+		 log.Fatal(err.Error())
+	 }
+	}
+	log.Printf("Result: %+v\n", result)
+}
 func DownloadItems(sess *session.Session){
 	file, err := os.Create("download1.txt")
 	if err != nil{
@@ -76,9 +96,13 @@ func main() {
 	}
 	UploadItem(sess)
 	fmt.Println("upload items")
+
 	ListItems(sess)
 	fmt.Println("List items info")
+
 	DownloadItems(sess)
 	fmt.Println("download items")
+
+	DeleteItem(sess)
 	fmt.Println("delete items")
 }
